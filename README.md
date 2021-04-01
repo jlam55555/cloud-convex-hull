@@ -1,7 +1,9 @@
 # Distributed Convex Hull
-A distributed Quickhull algorithm implemented on AWS services
+Distributed convex hull cloud service implemented on AWS
 
 <!-- TODO: summary here -->
+
+<!-- TODO: report incoming -->
 
 ---
 
@@ -26,14 +28,14 @@ go get gonum.org/v1/plot/
 
 ##### Compiling
 ```bash
-$ go run src/convexhull/main.go
+go run src/convexhull/main.go
 ```
 
 <!-- TODO: include more detailed build instructions here -->
 
 ##### Tests
 ```bash
-$ go test src/convexhull/main_test.go
+go test src/convexhull/main_test.go
 ```
 
 <!-- TODO: include a list of tests -->
