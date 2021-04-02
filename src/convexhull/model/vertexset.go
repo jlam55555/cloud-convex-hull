@@ -26,15 +26,15 @@ func (vs *Vertex2Set) XY(i int) (float64, float64) {
 
 // ToVertexSubset creates a new Vertex2Subset indicating all the elements of the
 // underlying Vertex2Set
-func (vs *Vertex2Set) ToVertexSubset() *Vertex2Subset {
+func (vs *Vertex2Set) ToVertexSubset() Vertex2Subset {
 	var is Vertex2Subset = make([]*Vertex2, vs.Len())
 
 	// fill in all pointers
-	for i, v := range vs.Vertices {
-		is[i] = &v
+	for i, _ := range vs.Vertices {
+		is[i] = &vs.Vertices[i]
 	}
 
-	return &is
+	return is
 }
 
 // Append is a helper function to shorten doing vss = append(vss, ...)
