@@ -1,6 +1,7 @@
 package main
 
 import (
+	"convexhull/algo2d/quickhull"
 	"convexhull/test"
 	"convexhull/utils"
 	"log"
@@ -13,7 +14,9 @@ const N = int(1e1)
 func TestConvexHull2D(t *testing.T) {
 	vs := test.GenerateVertexSet(N)
 
-	utils.PlotVertexSet2(&vs, "../../res/test.png")
+	utils.PlotVertex2Set(vs, "../../res/test.png")
+
+	quickhull.QuickHull2D(vs)
 
 	log.Fatalln("Number of vertices: ", len(vs.Vertices))
 }

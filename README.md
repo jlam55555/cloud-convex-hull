@@ -28,16 +28,33 @@ go get gonum.org/v1/plot/
 
 ##### Compiling
 ```bash
-go run src/convexhull/main.go
+go run convexhull
 ```
 
 <!-- TODO: include more detailed build instructions here -->
 
-##### Tests
+##### Tests and Benchmarks
+Using the `go test` tool will run the tests in `main_test.go`.
 ```bash
-go test src/convexhull/main_test.go
+go test convexhull [-bench .] [-benchmem]
 ```
 
 <!-- TODO: include a list of tests -->
+
+---
+
+### The List of TODO's
+(In no particular order)
+- Implement the 2D algorithm
+- Write tests for the algorithm
+- Implement the 3D algorithm
+- Implement a visualizer for the 2D and/or 3D cases
+- Add support for (at least one) common 3D CAD format
+- Generate a mesh from a 3D convex hull
+- Write the front-end
+- Write an AWS Lambda handler
+- Write an AWS S3 handler
+- Learn how to use AWS Step Functions and/or AWS SNS
+- Learn how to use AWS API Gateway
 
 [gonumplot]: https://github.com/gonum/plot

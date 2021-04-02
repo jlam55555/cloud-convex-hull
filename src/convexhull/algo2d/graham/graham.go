@@ -6,9 +6,9 @@ import (
 )
 
 // GrahamScan2D performs a convex hull on a 2D pointset
-func GrahamScan2D(vs *model.VertexSet2) model.VertexSet2 {
+func GrahamScan2D(vs *model.Vertex2Set) model.Vertex2Set {
 	// TODO
 	log.Fatalln("Graham scan not implemented")
 
-	return model.VertexSet2{}
+	return model.Vertex2Set{}
 }

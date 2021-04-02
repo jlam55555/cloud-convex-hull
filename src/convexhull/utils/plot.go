@@ -8,8 +8,8 @@ import (
 	"log"
 )
 
-// PlotVertexSet2 plots a 2D vertex set using gonum/plot
-func PlotVertexSet2(vs *model.VertexSet2, filename string) {
+// PlotVertex2Set plots a 2D vertex set using gonum/plot
+func PlotVertex2Set(vs *model.Vertex2Set, filename string) {
 	plt := plot.New()
 	scatter, err := plotter.NewScatter(vs)
 	if err != nil {
