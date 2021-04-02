@@ -2,8 +2,6 @@ package quickhull
 
 import (
 	"convexhull/model"
-	"convexhull/utils"
-	"fmt"
 )
 
 // distToLine calculates a measure of distance (not properly normalized) between
@@ -15,12 +13,37 @@ func distToLine(l *model.Line2, v *model.Vertex2) float64 {
 }
 
 // quickHull2DRec is the recursive part of the QuickHull algorithm
-func quickHull2DRec(vss *model.Vertex2Subset, v1 *model.Vertex2,
-	v2 *model.Vertex2) []int {
+func quickHull2DRec(vss model.Vertex2Subset, v1 *model.Vertex2,
+	v2 *model.Vertex2) model.Vertex2Subset {
+
+	// degenerate case: has to be contained within convex hull
+	if len(vss) < 2 {
+		return vss
+	}
 
 	// find point furthest from the oriented line
+	div := &model.Line2{V1: v1, V2: v2}
+	maxDist, vFurthest := 0., vss[0]
+	for i, v := range vss {
+		dist := distToLine(div, v)
+		if dist > maxDist {
+			maxDist = dist
+			vFurthest = vss[i]
+		}
+	}
 
-	return make([]int, 0)
+	// TODO: inefficient to calculate both partitions when only one is
+	// 	needed; should modify partitionPoints
+	vss1, _ := partitionPoints(vss, v1, vFurthest)
+	vss2, _ := partitionPoints(vss, vFurthest, v2)
+
+	ch1 := quickHull2DRec(vss1, v1, vFurthest)
+	ch2 := quickHull2DRec(vss2, vFurthest, v2)
+
+	ch := append(ch1, ch2...)
+	ch = append(ch, vFurthest)
+
+	return ch
 }
 
 // partitionPoints partitions a VertexSubset by the dividing line
@@ -29,7 +52,7 @@ func partitionPoints(vss model.Vertex2Subset, v1, v2 *model.Vertex2) (
 	model.Vertex2Subset, model.Vertex2Subset) {
 
 	vss1, vss2 := model.Vertex2Subset{}, model.Vertex2Subset{}
-	div := model.Line2{V1: v1, V2: v2}
+	div := &model.Line2{V1: v1, V2: v2}
 
 	for _, v := range vss {
 		// don't include endpoints of line in partition
@@ -37,11 +60,9 @@ func partitionPoints(vss model.Vertex2Subset, v1, v2 *model.Vertex2) (
 			continue
 		}
 
-		fmt.Println(v.X, v.Y)
-
 		// distToLine is signed perpendicular distance: we only care
 		// about the sign here
-		if distToLine(&div, v) > 0 {
+		if distToLine(div, v) > 0 {
 			vss1.Append(v)
 		} else {
 			vss2.Append(v)
@@ -52,7 +73,7 @@ func partitionPoints(vss model.Vertex2Subset, v1, v2 *model.Vertex2) (
 }
 
 // QuickHull2D calculates the 2D convex hull
-func QuickHull2D(vs *model.Vertex2Set) model.Vertex2Set {
+func QuickHull2D(vs *model.Vertex2Set) *model.Vertex2Set {
 
 	// find point furthest to the left and right
 	xMin, xMax := &vs.Vertices[0], &vs.Vertices[0]
@@ -63,8 +84,6 @@ func QuickHull2D(vs *model.Vertex2Set) model.Vertex2Set {
 		if v.X > xMax.X {
 			xMax = &vs.Vertices[i]
 		}
-
-		fmt.Println(v.X, xMin.X, xMax.X)
 	}
 
 	// convert input vertex set to Vertex2Subset
@@ -74,11 +93,18 @@ func QuickHull2D(vs *model.Vertex2Set) model.Vertex2Set {
 	vss1, vss2 := partitionPoints(vss, xMin, xMax)
 
 	// call recursive method
-	utils.PlotVertex2Set(&model.Vertex2Set{
-		Vertices: []model.Vertex2{*xMin, *xMax},
-	}, "../../res/edges.png")
-	utils.PlotVertex2Set(vss1.ToVertexSet(), "../../res/vss1.png")
-	utils.PlotVertex2Set(vss2.ToVertexSet(), "../../res/vss2.png")
+	//utils.PlotVertex2Set(&model.Vertex2Set{
+	//	Vertices: []model.Vertex2{*xMin, *xMax},
+	//}, "../../res/edges.png")
+	//utils.PlotVertex2Set(vss1.ToVertexSet(), "../../res/vss1.png")
+	//utils.PlotVertex2Set(vss2.ToVertexSet(), "../../res/vss2.png")
 
-	return model.Vertex2Set{}
+	ch1 := quickHull2DRec(vss1, xMin, xMax)
+	ch2 := quickHull2DRec(vss2, xMax, xMin)
+
+	ch := append(ch1, ch2...)
+	ch = append(ch, xMin)
+	ch = append(ch, xMax)
+
+	return ch.ToVertexSet()
 }
