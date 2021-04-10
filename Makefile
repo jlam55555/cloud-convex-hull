@@ -1,12 +1,9 @@
-# Scripts to automate the build/deployment processes.
-#
-# Most of the variables are set with default values (?=) be overwritten with
-# environment variables. E.g., to override the build directory:
-# $ BUILDDIR=build make lambda-create
+### Scripts to automate the build/deployment processes.
 
 ################################################################################
 
-### Configurables
+### configurables
+# anything in this section can be overridden with environment variables
 
 # AWS primitives
 AWS_REGION?=us-east-1
@@ -49,6 +46,9 @@ GO_LDFLAGS?=-ldflags="-X main.awsRegion=$(AWS_REGION)\
 API?=$(APP_PREFIX)_api
 
 ################################################################################
+
+### non-configurables
+# everything past here is predetermined by the configurables; do not modify
 
 .PHONY:
 all: host-bucket-create\
@@ -146,7 +146,6 @@ api-delete:
 
 ### packaging golang for aws
 # ref: https://docs.aws.amazon.com/lambda/latest/dg/golang-package.html
-
 $(BUILDDIR)/$(GO_BINARY): $(GO_SOURCES)
 	$(GO_ENVVAR) go build -o $@ $(GO_LDFLAGS) $(GO_PACKAGE)
 
@@ -160,6 +159,11 @@ $(BUILDDIR)/$(GO_BINARY).zip: $(BUILDDIR)/$(GO_BINARY)
 .PHONY:
 target-clean:
 	rm -rf $(BUILDDIR)
+
+.PHONY:
+lint:
+	golint src/$(GO_PACKAGE)/**
+	go fmt $(GO_PACKAGE)
 
 ################################################################################
 
