@@ -1,4 +1,5 @@
-package quickhull
+// Package quickhull2d contains a 2D implementation of the QuickHull algorithm
+package quickhull2d
 
 import (
 	"convexhull/model"
@@ -32,6 +33,7 @@ func quickHull2DRec(vss model.Vertex2Subset, v1 *model.Vertex2,
 		}
 	}
 
+	// discard points within the dividing lines created by this far point
 	// TODO: inefficient to calculate both partitions when only one is
 	// 	needed; should modify partitionPoints
 	vss1, _ := partitionPoints(vss, v1, vFurthest)
@@ -42,7 +44,6 @@ func quickHull2DRec(vss model.Vertex2Subset, v1 *model.Vertex2,
 
 	ch := append(ch1, ch2...)
 	ch = append(ch, vFurthest)
-
 	return ch
 }
 
@@ -93,18 +94,11 @@ func QuickHull2D(vs *model.Vertex2Set) *model.Vertex2Set {
 	vss1, vss2 := partitionPoints(vss, xMin, xMax)
 
 	// call recursive method
-	//utils.PlotVertex2Set(&model.Vertex2Set{
-	//	Vertices: []model.Vertex2{*xMin, *xMax},
-	//}, "../../res/edges.png")
-	//utils.PlotVertex2Set(vss1.ToVertexSet(), "../../res/vss1.png")
-	//utils.PlotVertex2Set(vss2.ToVertexSet(), "../../res/vss2.png")
-
 	ch1 := quickHull2DRec(vss1, xMin, xMax)
 	ch2 := quickHull2DRec(vss2, xMax, xMin)
 
 	ch := append(ch1, ch2...)
 	ch = append(ch, xMin)
 	ch = append(ch, xMax)
-
 	return ch.ToVertexSet()
 }
