@@ -25,7 +25,9 @@ export GOPATH=$GOPATH:$(pwd)
 ```
 Download the [`gonum/plot`][gonumplot] library:
 ```bash
-go get gonum.org/v1/plot/
+go get gonum.org/v1/plot/                       # plotting library
+go get github.com/aws/aws-lambda-go/lambda      # lambda model
+go get github.com/aws/aws-sdk-go/service/s3     # s3 sdk
 ```
 (This will download to the first entry in your `GOPATH`.)
 
