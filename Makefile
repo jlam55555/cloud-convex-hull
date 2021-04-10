@@ -1,3 +1,5 @@
+# Scripts to automate the build/deployment processes
+
 # AWS primitives
 AWS_REGION ?=us-east-1
 AWS_PROFILE ?=default
@@ -12,23 +14,19 @@ AWS_PREFIX ?=ch
 AWS_FUNCTION ?=$(AWS_PREFIX)_function
 AWS_ROLE ?=$(AWS_PREFIX)_role
 
-# default build directory
-BUILDDIR ?=target
-
-# for iam
-TRUST_POLICY:=$(shell cat aws_res/trust_policy.txt|tr -d '\t')
-
-# for lambda
-LAMBDA_DESC ?=Lambda for convex hull application
-
-# compile flags
-SOURCES ?=$(shell find src -name *.go)
-PACKAGE ?=$(AWS_PREFIX)lambda
-BINARY ?=$(AWS_PREFIX)lambda
-GOFLAGS ?=GOOS=linux GOARCH=amd64 CGO_ENABLED=0
+################################################################################
 
 .PHONY:
-all: iam-create lambda-create
+all: iam-create sleep lambda-create
+
+.PHONY:
+clean: target-clean iam-delete lambda-delete
+
+################################################################################
+
+### creating iam role for lambda execution
+# ref: https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html
+TRUST_POLICY:=$(shell cat aws_res/trust_policy.txt|tr -d '\t')
 
 .PHONY:
 iam-create:
@@ -37,9 +35,25 @@ iam-create:
 		--assume-role-policy-document '$(TRUST_POLICY)'
 
 .PHONY:
+sleep:
+	@echo "Pausing to let IAM provision before creating lambda..."
+	@sleep 5
+
+.PHONY:
 iam-delete:
 	-$(AWS) iam delete-role \
 		--role $(AWS_ROLE)
+
+
+################################################################################
+
+### packaging golang for aws
+# ref: https://docs.aws.amazon.com/lambda/latest/dg/golang-package.html
+BUILDDIR ?=target
+SOURCES ?=$(shell find src -name *.go)
+PACKAGE ?=$(AWS_PREFIX)lambda
+BINARY ?=$(AWS_PREFIX)lambda
+GOFLAGS ?=GOOS=linux GOARCH=amd64 CGO_ENABLED=0
 
 $(BUILDDIR)/$(BINARY): $(SOURCES)
 	$(GOFLAGS) go build -o $@ $(PACKAGE)
@@ -47,8 +61,15 @@ $(BUILDDIR)/$(BINARY): $(SOURCES)
 $(BUILDDIR)/$(BINARY).zip: $(BUILDDIR)/$(BINARY)
 	zip -j $@ $<
 
+.PHONY:
 target-clean:
 	rm -rf $(BUILDDIR)
+
+################################################################################
+
+### deploying lambda
+# ref: (see packaging golang for lambda)
+LAMBDA_DESC ?=Lambda for convex hull application
 
 .PHONY:
 lambda-create: $(BUILDDIR)/$(BINARY).zip
@@ -64,6 +85,3 @@ lambda-create: $(BUILDDIR)/$(BINARY).zip
 lambda-delete:
 	-$(AWS) lambda delete-function \
 		--function-name $(AWS_FUNCTION)
-
-.PHONY:
-clean: target-clean iam-delete lambda-delete

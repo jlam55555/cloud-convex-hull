@@ -15,6 +15,9 @@ Distributed convex hull cloud service implemented on AWS
 
 ### Build instructions
 
+<!-- TODO: these build instructions have to be updated for
+	use with the new AWS Makefile -->
+
 ##### Prerequisites
 Update your `GOPATH` environment variable to include the current directory:
 ```bash
