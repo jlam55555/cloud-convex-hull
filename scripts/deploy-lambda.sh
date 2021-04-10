@@ -3,33 +3,37 @@
 # deploy lambda in src/chlambda to aws
 # ref: https://docs.aws.amazon.com/lambda/latest/dg/golang-package.html
 
-PACKAGE=${PACKAGE:-chlambda}
-BUILDDIR=${BUILDDIR:-target}
-BINARY=${BINARY:-chlambda}
-HANDLER=${HANDLER:-main}
+# source macros
+. scripts/common.sh
 
-if [ -z "$AWS_FUNCTION" ] || [ -z "$AWS_ID" ] || [ -z "$AWS_EXECUTION_ROLE" ]
-then
-	echo -e "error: the AWS_FUNCTION, AWS_ID, and AWS_EXECUTION_ROLE"
-	echo -e "\tenvironment variables must be set"
-	exit
-fi
+PACKAGE=${PACKAGE:-chlambda}
+BINARY=${BINARY:-chlambda}
+HANDLER=${HANDLER:-chlambda}
+LAMBDA_DESC=${LAMBDA_DESC:-"Lambda for convex hull application"}
 
 # build flags
 export GOOS=linux
+export GOARCH=amd64
 export CGO_ENABLED=0
 
 # build
+echo "Creating build directory..."
 mkdir -p "$BUILDDIR"
+
+echo "Building lambda binary..."
 go build -o "$BUILDDIR/$BINARY" "$PACKAGE"
 
 # package for aws
-zip "$BUILDDIR/$BINARY.zip" "$BUILDDIR/$BINARY"
-aws lambda create-function \
+echo "Zipping binary..."
+zip -j "$BUILDDIR/$BINARY.zip" "$BUILDDIR/$BINARY"
+
+echo "Creating function on lambda..."
+$AWS lambda create-function \
 	--function-name "$AWS_FUNCTION" \
 	--runtime go1.x \
-	--zip-file "$BUILDDIR/$BINARY.zip" \
+	--zip-file "fileb://$BUILDDIR/$BINARY.zip" \
 	--handler "$HANDLER" \
-	--role "arn:aws:iam::$AWS_ID:role/$AWS_EXECUTION_ROLE"
+	--role "arn:aws:iam::$AWS_ID:role/$AWS_ROLE" \
+	--description "$LAMBDA_DESC"
 
 echo "Done."
