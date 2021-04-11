@@ -25,7 +25,7 @@ api-create: api-delete
 	$(eval RET='$(shell $(CREATE_API_CMD))')
 	@echo $(RET)|jq .
 	$(eval API_ID=$(shell echo $(RET)|jq -r .ApiId))
-	$(eval API_ARN=arn:aws:execute-api:$(AWS_REGION):$(AWS_ID):$(API_ID)/*/POST/test)
+	$(eval API_ARN=$(call ARN,execute-api,$(API_ID)/*/POST/test))
 
 	@echo $(CREATE_INTEGRATION_CMD)
 	$(eval RET='$(shell $(CREATE_INTEGRATION_CMD))')

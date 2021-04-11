@@ -2,7 +2,7 @@
 # ref: see above
 # cors ref: https://docs.aws.amazon.com/AmazonS3/latest/userguide/ManageCorsUsing.html
 UPLOAD_BUCKET_URI:=s3://$(UPLOAD_BUCKET_NAME)
-UPLOAD_BUCKET_ARN:=arn:aws:s3:::$(UPLOAD_BUCKET_NAME)
+UPLOAD_BUCKET_ARN:=$(call S3ARN,$(UPLOAD_BUCKET_NAME))
 UPLOAD_BUCKET_CORS_POLICY_FILE:=$(shell cat \
 	aws_res/upload_bucket_cors_policy.json|tr -d '\t')
 

@@ -1,7 +1,7 @@
 ### creating an s3 bucket (for hosting the static webpage)
 # ref: https://docs.aws.amazon.com/cli/latest/userguide/cli-services-s3-commands.html
 HOST_BUCKET_URI:=s3://$(HOST_BUCKET_NAME)
-HOST_BUCKET_ARN:=arn:aws:s3:::$(HOST_BUCKET_NAME)/*
+HOST_BUCKET_ARN:=$(call S3ARN,$(HOST_BUCKET_NAME)/*)
 HOST_BUCKET_POLICY:=$(shell cat aws_res/host_bucket_policy.json|\
 	sed 's|ARN|$(HOST_BUCKET_ARN)|'|tr -d '\t')
 

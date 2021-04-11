@@ -1,7 +1,7 @@
 ### creating the appropriate (CloudWatch) log groups
 LOGGROUP_LAMBDA:=/aws/lambda/$(LAMBDA_NAME)
 LOGGROUP_API:=/aws/apigatewayv2/$(API_NAME)
-LOGGROUP_API_ARN:=arn:aws:logs:$(AWS_REGION):$(AWS_ID):log-group:$(LOGGROUP_API)
+LOGGROUP_API_ARN:=$(call ARN,logs,log-group:$(LOGGROUP_API))
 
 .PHONY:
 loggroup-create:

@@ -1,6 +1,6 @@
 ### deploying lambda
 # ref: (see packaging golang for lambda)
-LAMBDA_ARN:=arn:aws:lambda:$(AWS_REGION):$(AWS_ID):$(LAMBDA_NAME)
+LAMBDA_ARN:=$(call ARN,lambda,$(LAMBDA_NAME))
 
 .PHONY:
 lambda-create: $(GO_ZIP_PATH)

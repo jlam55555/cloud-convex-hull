@@ -2,8 +2,9 @@
 # ref: https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html
 LAMBDA_POLICY:=$(shell cat aws_res/lambda_policy.json|\
 	sed 's|ARN|$(UPLOAD_BUCKET_ARN)|'|tr -d '\t')
-LAMBDA_CLOUDWATCH_POLICY_ARN:=arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-LAMBDA_ROLE_ARN:=arn:aws:iam::$(AWS_ID):role/$(LAMBDA_ROLE)
+LAMBDA_CLOUDWATCH_POLICY_ARN:=\
+	arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+LAMBDA_ROLE_ARN:=$(call IAMARN,role/$(LAMBDA_ROLE))
 
 .PHONY:
 lambda-iam-create:

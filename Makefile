@@ -47,6 +47,18 @@ API_STAGE?=dev
 AWS:=aws --region $(AWS_REGION) --profile $(AWS_PROFILE)
 AWS_ID:=$(shell $(AWS) sts get-caller-identity|jq -r '.Account')
 
+define ARN
+arn:aws:$(1):$(AWS_REGION):$(AWS_ID):$(2)
+endef
+
+define S3ARN
+arn:aws:s3:::$(1)
+endef
+
+define IAMARN
+arn:aws:iam::$(AWS_ID):$(1)
+endef
+
 .PHONY:
 all: host-bucket-create\
 	upload-bucket-create\
