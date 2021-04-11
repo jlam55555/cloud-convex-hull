@@ -47,17 +47,29 @@ API_STAGE?=dev
 AWS:=aws --region $(AWS_REGION) --profile $(AWS_PROFILE)
 AWS_ID:=$(shell $(AWS) sts get-caller-identity|jq -r '.Account')
 
+# ARN-generating macros
 define ARN
 arn:aws:$(1):$(AWS_REGION):$(AWS_ID):$(2)
 endef
-
 define S3ARN
 arn:aws:s3:::$(1)
 endef
-
 define IAMARN
 arn:aws:iam::$(AWS_ID):$(1)
 endef
+
+# macro to print command and save result in Makefile (cannot do natively afaik)
+define ECHO_SAVE
+@echo $(1)
+$(eval JSON:='$(shell $(1))')
+@echo $(JSON)|jq .
+$(eval $(2):=$(shell echo $(JSON)|jq $(3)))
+endef
+
+################################################################################
+
+### Main build targets
+# see the component makefiles for additional targets and implementation details
 
 .PHONY:
 all: host-bucket-create\

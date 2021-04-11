@@ -3,14 +3,6 @@
 
 # this is ugly because APIs don't go by their names, like lambdas or buckets,
 # but rather by auto-generated ID's
-CREATE_API_CMD:=$(AWS) apigatewayv2 create-api \
-	--name $(API_NAME) \
-	--protocol-type HTTP
-CREATE_INTEGRATION_CMD=$(AWS) apigatewayv2 create-integration \
-	--api-id $(API_ID) \
-	--integration-type AWS_PROXY \
-	--integration-uri $(LAMBDA_ARN) \
-	--payload-format-version 2.0
 API_LOGGROUP_FORMAT_FILE:=$(shell cat aws_res/api_loggroup_format.json|\
 	sed 's|ARN|$(LOGGROUP_API_ARN)|'|tr -d '\t')
 LAMBDA_API_PERMISSION_SID=$(API_NAME)_invoke
@@ -18,19 +10,18 @@ LAMBDA_API_PERMISSION_SID=$(API_NAME)_invoke
 # this calls api-delete beforehand to make sure there are not multiple copies
 # of the API with the same name
 .PHONY:
-api-create: api-delete
+api-create:
 	@# get and store output of create api
-	@# TODO: convert this to a function
-	@echo $(CREATE_API_CMD)
-	$(eval RET='$(shell $(CREATE_API_CMD))')
-	@echo $(RET)|jq .
-	$(eval API_ID=$(shell echo $(RET)|jq -r .ApiId))
+	$(call ECHO_SAVE,$(AWS) apigatewayv2 create-api \
+		--name $(API_NAME) \
+		--protocol-type HTTP,API_ID,'.ApiId')
 	$(eval API_ARN=$(call ARN,execute-api,$(API_ID)/*/POST/test))
 
-	@echo $(CREATE_INTEGRATION_CMD)
-	$(eval RET='$(shell $(CREATE_INTEGRATION_CMD))')
-	@echo $(RET)|jq .
-	$(eval INTEGRATION_ID=$(shell echo $(RET)|jq -r .IntegrationId))
+	$(call ECHO_SAVE,$(AWS) apigatewayv2 create-integration \
+		--api-id $(API_ID) \
+		--integration-type AWS_PROXY \
+		--integration-uri $(LAMBDA_ARN) \
+		--payload-format-version 2.0,INTEGRATION_ID,".IntegrationId")
 
 	-$(AWS) apigatewayv2 create-route \
 		--api-id $(API_ID) \

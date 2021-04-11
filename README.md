@@ -55,16 +55,13 @@ go test convexhull [-bench .] [-benchmem]
 - Implement a visualizer for the 2D and/or 3D cases
 - Add support for (at least one) common 3D CAD format
 - Generate a mesh from a 3D convex hull
-- Break up Makefile into multiple files
 - Document all the targets in the Makefile (and update this README in general)
 - Document the project using draw.io
-- Write a target that gets the current API URL
 - Write a Makefile function that returns the JSON value
-- Write a Makefile function that generates ARNs
 - Read the papers and lectures in http://www.cs.jhu.edu/~misha/Spring20/
 
 ### AWS TODO's:
-- AWS Step Functions and/or AWS SNS
-- AWS CloudFront and Route 53 for SSL & domain names
+- AWS Step Functions and/or AWS SNS (note -- cannot use step functions?)
+- AWS CloudFront and Route 53 for SSL & domain names (note -- both are denied)
 
 [gonumplot]: https://github.com/gonum/plot
