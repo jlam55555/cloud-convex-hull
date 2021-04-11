@@ -116,10 +116,15 @@ host-bucket-delete:
 # ref: see above
 UPLOAD_BUCKET_URI:=s3://$(UPLOAD_BUCKET)
 UPLOAD_BUCKET_ARN:=arn:aws:s3:::$(UPLOAD_BUCKET)
+UPLOAD_BUCKET_CORS_POLICY_FILE:=$(shell cat \
+	aws_res/upload_bucket_cors_policy.json|tr -d '\t')
 
 .PHONY:
 upload-bucket-create:
 	-$(AWS) s3 mb $(UPLOAD_BUCKET_URI)
+	-$(AWS) s3api put-bucket-cors \
+		--bucket $(UPLOAD_BUCKET) \
+		--cors-configuration '$(UPLOAD_BUCKET_CORS_POLICY_FILE)'
 
 .PHONY:
 upload-bucket-delete:

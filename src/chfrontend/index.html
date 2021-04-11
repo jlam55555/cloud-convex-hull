@@ -1,2 +1,31 @@
 <h1>Hello, world!</h1>
 <p>This is a static page.</p>
+
+<input id="upload-input" type="file">
+<input id="upload-url" type="text" placeholder="PUT request URL">
+<button id="upload-button">Upload file</button>
+
+<script>
+    const uploadFileInput = document.querySelector('#upload-input');
+    const uploadFileButton = document.querySelector('#upload-button');
+    const uploadFileUrl = document.querySelector('#upload-url');
+
+    uploadFileButton.addEventListener('click', evt => {
+        const putUrl = uploadFileUrl.value;
+        const file = uploadFileInput.files[0];
+
+        fetch(putUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': file.type
+            },
+            body: file
+        })
+            .then(res => {
+                console.log(res);
+            })
+            .catch(err => {
+                console.error(err)
+            });
+    });
+</script>
