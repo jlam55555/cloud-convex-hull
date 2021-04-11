@@ -114,6 +114,7 @@ host-bucket-delete:
 
 ### creating an s3 bucket (for uploads)
 # ref: see above
+# cors ref: https://docs.aws.amazon.com/AmazonS3/latest/userguide/ManageCorsUsing.html
 UPLOAD_BUCKET_URI:=s3://$(UPLOAD_BUCKET)
 UPLOAD_BUCKET_ARN:=arn:aws:s3:::$(UPLOAD_BUCKET)
 UPLOAD_BUCKET_CORS_POLICY_FILE:=$(shell cat \

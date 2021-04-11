@@ -50,16 +50,19 @@ go test convexhull [-bench .] [-benchmem]
 
 ### The List of TODO's
 (In no particular order)
-- Implement the 2D algorithm
 - Write tests for the algorithm
 - Implement the 3D algorithm
 - Implement a visualizer for the 2D and/or 3D cases
 - Add support for (at least one) common 3D CAD format
 - Generate a mesh from a 3D convex hull
-- Write the front-end
-- Write an AWS Lambda handler
-- Write an AWS S3 handler
-- Learn how to use AWS Step Functions and/or AWS SNS
-- Learn how to use AWS API Gateway
+- Break up Makefile into multiple files
+- Document all the targets in the Makefile (and update this README in general)
+- Document the project using draw.io
+- Read the papers and lectures in http://www.cs.jhu.edu/~misha/Spring20/
+
+### AWS TODO's:
+- AWS Step Functions and/or AWS SNS
+- AWS API Gateway and integrate with lambda
+- AWS CloudFront and Route 53 for SSL & domain names
 
 [gonumplot]: https://github.com/gonum/plot
