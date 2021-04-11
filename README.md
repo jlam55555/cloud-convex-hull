@@ -58,11 +58,13 @@ go test convexhull [-bench .] [-benchmem]
 - Break up Makefile into multiple files
 - Document all the targets in the Makefile (and update this README in general)
 - Document the project using draw.io
+- Write a target that gets the current API URL
+- Write a Makefile function that returns the JSON value
+- Write a Makefile function that generates ARNs
 - Read the papers and lectures in http://www.cs.jhu.edu/~misha/Spring20/
 
 ### AWS TODO's:
 - AWS Step Functions and/or AWS SNS
-- AWS API Gateway and integrate with lambda
 - AWS CloudFront and Route 53 for SSL & domain names
 
 [gonumplot]: https://github.com/gonum/plot
