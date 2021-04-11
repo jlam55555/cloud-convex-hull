@@ -66,3 +66,8 @@ api-delete:
 	-$(AWS) lambda remove-permission \
 		--function-name $(LAMBDA_ARN) \
 		--statement-id $(LAMBDA_API_PERMISSION_SID)
+
+.PHONY:
+api-get-endpoint:
+	-$(AWS) apigatewayv2 get-apis|jq -r \
+		'[."Items"[]|select(.Name=="$(API_NAME)")][0].ApiEndpoint'
