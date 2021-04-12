@@ -58,6 +58,7 @@ go test convexhull [-bench .] [-benchmem]
 - Document all the targets in the Makefile (and update this README in general)
 - Document the project using draw.io
 - Read the papers and lectures in http://www.cs.jhu.edu/~misha/Spring20/
+- Each time you create a new API gateway it triggers a rebuild?
 
 ### AWS TODO's:
 - AWS Step Functions and/or AWS SNS (note -- cannot use step functions?)
