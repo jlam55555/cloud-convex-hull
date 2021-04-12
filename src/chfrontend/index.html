@@ -10,6 +10,25 @@
     const uploadFileButton = document.querySelector('#upload-button');
     const uploadFileUrl = document.querySelector('#upload-url');
 
+    // TODO: build this value into the website
+    fetch('https://xs5aw2tkd0.execute-api.us-east-1.amazonaws.com/dev/test', {
+        method: 'POST',
+        crossorigin: 'anonymous',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: '{"Key":"testing","Type":"GET"}'
+    })
+        .then(res => {
+            return res.text();
+        })
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.error(err);
+        });
+
     uploadFileButton.addEventListener('click', evt => {
         const putUrl = uploadFileUrl.value;
         const file = uploadFileInput.files[0];

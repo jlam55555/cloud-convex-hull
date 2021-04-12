@@ -4,7 +4,8 @@
 UPLOAD_BUCKET_URI:=s3://$(UPLOAD_BUCKET_NAME)
 UPLOAD_BUCKET_ARN:=$(call S3ARN,$(UPLOAD_BUCKET_NAME))
 UPLOAD_BUCKET_CORS_POLICY_FILE:=$(shell cat \
-	aws_res/upload_bucket_cors_policy.json|tr -d '\t')
+	aws_res/upload_bucket_cors_policy.json|\
+	sed 's|WEBSITE|$(HOST_BUCKET_WEBSITE)|'|tr -d '\t')
 
 .PHONY:
 upload-bucket-create:

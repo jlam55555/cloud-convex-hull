@@ -57,7 +57,6 @@ go test convexhull [-bench .] [-benchmem]
 - Generate a mesh from a 3D convex hull
 - Document all the targets in the Makefile (and update this README in general)
 - Document the project using draw.io
-- Write a Makefile function that returns the JSON value
 - Read the papers and lectures in http://www.cs.jhu.edu/~misha/Spring20/
 
 ### AWS TODO's:

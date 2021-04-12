@@ -4,6 +4,7 @@ HOST_BUCKET_URI:=s3://$(HOST_BUCKET_NAME)
 HOST_BUCKET_ARN:=$(call S3ARN,$(HOST_BUCKET_NAME)/*)
 HOST_BUCKET_POLICY:=$(shell cat aws_res/host_bucket_policy.json|\
 	sed 's|ARN|$(HOST_BUCKET_ARN)|'|tr -d '\t')
+HOST_BUCKET_WEBSITE:=http://$(HOST_BUCKET_NAME).s3-website-$(AWS_REGION).amazonaws.com
 
 .PHONY:
 host-bucket-create:

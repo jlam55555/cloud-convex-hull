@@ -1,0 +1,13 @@
+{
+	"AllowHeaders": [
+		"*"
+	],
+	"AllowMethods": [
+		"POST"
+	],
+	"AllowOrigins": [
+		"*",
+		"WEBSITE"
+	],
+	"ExposeHeaders": []
+}

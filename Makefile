@@ -61,9 +61,9 @@ endef
 # macro to print command and save result in Makefile (cannot do natively afaik)
 define ECHO_SAVE
 @echo $(1)
-$(eval JSON:='$(shell $(1))')
-@echo $(JSON)|jq .
-$(eval $(2):=$(shell echo $(JSON)|jq $(3)))
+$(eval JSON:=$(shell $(1)))
+@echo '$(JSON)'|jq .
+$(eval $(2):=$(shell echo '$(JSON)'|jq $(3)))
 endef
 
 ################################################################################

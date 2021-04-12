@@ -5,7 +5,10 @@
 # but rather by auto-generated ID's
 API_LOGGROUP_FORMAT_FILE:=$(shell cat aws_res/api_loggroup_format.json|\
 	sed 's|ARN|$(LOGGROUP_API_ARN)|'|tr -d '\t')
+API_CORS_POLICY_FILE:=$(shell cat aws_res/api_cors_policy.json|\
+	sed 's|WEBSITE|$(HOST_BUCKET_WEBSITE)|'|tr -d '\t')
 LAMBDA_API_PERMISSION_SID=$(API_NAME)_invoke
+
 
 # this calls api-delete beforehand to make sure there are not multiple copies
 # of the API with the same name
@@ -14,6 +17,7 @@ api-create:
 	@# get and store output of create api
 	$(call ECHO_SAVE,$(AWS) apigatewayv2 create-api \
 		--name $(API_NAME) \
+		--cors-configuration '$(API_CORS_POLICY_FILE)' \
 		--protocol-type HTTP,API_ID,'.ApiId')
 	$(eval API_ARN=$(call ARN,execute-api,$(API_ID)/*/POST/test))
 

@@ -10,7 +10,8 @@
 				"DELETE"
 			],
 			"AllowedOrigins": [
-				"http://chhostbucket.s3-website-us-east-1.amazonaws.com"
+				"*",
+				"WEBSITE"
 			],
 			"ExposeHeaders": []
 		}
