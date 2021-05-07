@@ -9,6 +9,10 @@ type Vector3 struct {
 	X, Y, Z float64
 }
 
+func NewZeroVector3() Vector3 {
+	return Vector3{0, 0, 0}
+}
+
 func NewVector3FromSlice(v [3]float64) Vector3 {
 	return Vector3{v[0], v[1], v[2]}
 }
