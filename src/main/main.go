@@ -60,7 +60,8 @@ func main() {
 		})
 	}
 
-	file, err = os.OpenFile("res/test.obj", os.O_WRONLY|os.O_CREATE, 0755)
+	file, err = os.OpenFile("res/test.obj", os.O_WRONLY|os.O_CREATE|
+		os.O_TRUNC, 0755)
 	if err != nil {
 		panic(err)
 	}
