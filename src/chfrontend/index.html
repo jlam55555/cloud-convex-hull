@@ -1,50 +1,13 @@
-<h1>Hello, world!</h1>
-<p>This is a static page.</p>
-
-<input id="upload-input" type="file">
-<input id="upload-url" type="text" placeholder="PUT request URL">
-<button id="upload-button">Upload file</button>
-
-<script>
-    const uploadFileInput = document.querySelector('#upload-input');
-    const uploadFileButton = document.querySelector('#upload-button');
-    const uploadFileUrl = document.querySelector('#upload-url');
-
-    // TODO: build this value into the website
-    fetch('https://xs5aw2tkd0.execute-api.us-east-1.amazonaws.com/dev/test', {
-        method: 'POST',
-        crossorigin: 'anonymous',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: '{"Key":"testing","Type":"GET"}'
-    })
-        .then(res => {
-            return res.text();
-        })
-        .then(res => {
-            console.log(res);
-        })
-        .catch(err => {
-            console.error(err);
-        });
-
-    uploadFileButton.addEventListener('click', evt => {
-        const putUrl = uploadFileUrl.value;
-        const file = uploadFileInput.files[0];
-
-        fetch(putUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': file.type
-            },
-            body: file
-        })
-            .then(res => {
-                console.log(res);
-            })
-            .catch(err => {
-                console.error(err)
-            });
-    });
-</script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
