@@ -3,3 +3,9 @@
 
 # Build targets
 target
+
+# Go built files
+pkg
+
+# Scratch files
+scratch
