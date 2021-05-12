@@ -40,6 +40,9 @@ GO_LDFLAGS?=-ldflags="-X main.awsRegion=$(AWS_REGION)\
 API_NAME?=$(APP_PREFIX)_api
 API_STAGE?=dev
 
+# cognito user pool
+USERPOOL_NAME?=$(APP_PREFIX)_userpool
+
 ################################################################################
 
 ### non-configurables
@@ -98,3 +101,4 @@ clean: target-clean\
 -include scripts/lambda_deploy.mk
 -include scripts/cloudwatch_loggroups.mk
 -include scripts/apigateway.mk
+-include scripts/cognito.mk
