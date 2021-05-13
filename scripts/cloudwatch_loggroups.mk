@@ -1,5 +1,5 @@
 ### creating the appropriate (CloudWatch) log groups
-LOGGROUP_LAMBDA:=/aws/lambda/$(LAMBDA_NAME)
+LOGGROUP_LAMBDA:=/aws/lambda/$(PRESIGN_LAMBDA_NAME)
 LOGGROUP_API:=/aws/apigatewayv2/$(API_NAME)
 LOGGROUP_API_ARN:=$(call ARN,logs,log-group:$(LOGGROUP_API))
 

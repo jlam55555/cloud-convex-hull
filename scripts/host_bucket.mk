@@ -7,9 +7,16 @@ HOST_BUCKET_POLICY:=$(shell cat aws_res/host_bucket_policy.json|\
 HOST_BUCKET_WEBSITE:=http://$(HOST_BUCKET_NAME).s3-website-$(AWS_REGION).amazonaws.com
 
 .PHONY:
+build-website:
+	-$(WEBSITE_BUILD)
+
+.PHONY:
+host-bucket-sync:
+	-$(AWS) s3 sync $(WEBSITE_DISTDIR) $(HOST_BUCKET_URI)
+
+.PHONY:
 host-bucket-create:
 	-$(AWS) s3 mb $(HOST_BUCKET_URI)
-	-$(AWS) s3 sync $(WEBSITE_SRCDIR) $(HOST_BUCKET_URI)
 	-$(AWS) s3api put-bucket-policy \
 		--bucket $(HOST_BUCKET_NAME) \
 		--policy '$(HOST_BUCKET_POLICY)'

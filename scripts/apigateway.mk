@@ -19,17 +19,17 @@ api-create:
 		--name $(API_NAME) \
 		--cors-configuration '$(API_CORS_POLICY_FILE)' \
 		--protocol-type HTTP,API_ID,'.ApiId')
-	$(eval API_ARN=$(call ARN,execute-api,$(API_ID)/*/POST/test))
+	$(eval API_ARN=$(call ARN,execute-api,$(API_ID)/*/POST/presign))
 
 	$(call ECHO_SAVE,$(AWS) apigatewayv2 create-integration \
 		--api-id $(API_ID) \
 		--integration-type AWS_PROXY \
-		--integration-uri $(LAMBDA_ARN) \
+		--integration-uri $(PRESIGN_LAMBDA_ARN) \
 		--payload-format-version 2.0,INTEGRATION_ID,".IntegrationId")
 
 	-$(AWS) apigatewayv2 create-route \
 		--api-id $(API_ID) \
-		--route-key 'POST /test' \
+		--route-key 'POST /presign' \
 		--target "integrations/$(INTEGRATION_ID)"|jq .
 
 	-$(AWS) apigatewayv2 create-stage \
@@ -42,7 +42,7 @@ api-create:
 		--stage-name $(API_STAGE)|jq .
 
 	-$(AWS) lambda add-permission \
-		--function-name $(LAMBDA_ARN) \
+		--function-name $(PRESIGN_LAMBDA_ARN) \
 		--statement-id $(LAMBDA_API_PERMISSION_SID) \
 		--action lambda:InvokeFunction \
 		--source-arn $(API_ARN) \
@@ -59,7 +59,7 @@ api-delete:
 			--api-id $(API_ID);)
 
 	-$(AWS) lambda remove-permission \
-		--function-name $(LAMBDA_ARN) \
+		--function-name $(PRESIGN_LAMBDA_ARN) \
 		--statement-id $(LAMBDA_API_PERMISSION_SID)
 
 .PHONY:

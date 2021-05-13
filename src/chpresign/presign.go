@@ -2,6 +2,7 @@ package main
 
 // use v2 of the aws go sdk
 import (
+	"chutil"
 	"context"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
@@ -13,10 +14,16 @@ import (
 	"strings"
 )
 
-// MyEvent is the input json for the lambda
-type MyEvent struct {
+// PresignEvent is the input json for the lambda
+type PresignEvent struct {
 	Type string `json:"type"`
 	Key  string `json:"key"`
+}
+
+// PresignResponse is the output for the lambda
+type PresignResponse struct {
+	Url string `json:"url"`
+	Key string `json:"key"`
 }
 
 // these are specified at linker-time
@@ -37,12 +44,14 @@ func init() {
 	psClient = s3.NewPresignClient(s3Client)
 }
 
-func getPresignedPutUrl(event events.APIGatewayProxyRequest, payload MyEvent) (
+func getPresignedPutUrl(event events.APIGatewayProxyRequest, payload PresignEvent) (
 	events.APIGatewayProxyResponse, error) {
+
+	key := chutil.GenKey()
 
 	input := &s3.PutObjectInput{
 		Bucket: aws.String(uploadBucketName),
-		Key:    aws.String(payload.Key),
+		Key:    aws.String(key),
 	}
 
 	psRequest, err :=
@@ -51,13 +60,23 @@ func getPresignedPutUrl(event events.APIGatewayProxyRequest, payload MyEvent) (
 		return events.APIGatewayProxyResponse{StatusCode: 500}, err
 	}
 
+	// generate random key -- like a UUID
+
+	jsn, err := json.Marshal(PresignResponse{
+		Url: psRequest.URL,
+		Key: key,
+	})
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+	}
+
 	return events.APIGatewayProxyResponse{
-		Body:       psRequest.URL,
+		Body:       string(jsn),
 		StatusCode: 200,
 	}, nil
 }
 
-func getPresignedGetUrl(event events.APIGatewayProxyRequest, payload MyEvent) (
+func getPresignedGetUrl(event events.APIGatewayProxyRequest, payload PresignEvent) (
 	events.APIGatewayProxyResponse, error) {
 
 	input := &s3.GetObjectInput{
@@ -71,8 +90,16 @@ func getPresignedGetUrl(event events.APIGatewayProxyRequest, payload MyEvent) (
 		return events.APIGatewayProxyResponse{StatusCode: 500}, err
 	}
 
+	jsn, err := json.Marshal(PresignResponse{
+		Url: psRequest.URL,
+		// no key returned for get request
+	})
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+	}
+
 	return events.APIGatewayProxyResponse{
-		Body:       psRequest.URL,
+		Body:       string(jsn),
 		StatusCode: 200,
 	}, nil
 }
@@ -91,7 +118,7 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (
 	}
 
 	// make sure input json is valid
-	var payload MyEvent
+	var payload PresignEvent
 	err := json.Unmarshal([]byte(event.Body), &payload)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
@@ -101,9 +128,9 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (
 	}
 
 	// make sure key is specified
-	if payload.Key == "" {
+	if payload.Key == "" && payload.Type == "GET" {
 		return events.APIGatewayProxyResponse{
-			Body:       "Input field 'key' must not be empty.",
+			Body:       "Input field 'key' must not be empty for GET request.",
 			StatusCode: 400,
 		}, nil
 	}

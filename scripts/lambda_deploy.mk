@@ -1,25 +1,28 @@
 ### deploying lambda
 # ref: (see packaging golang for lambda)
-LAMBDA_ARN:=$(call ARN,lambda,$(LAMBDA_NAME))
+PRESIGN_LAMBDA_ARN:=$(call ARN,lambda,"function:$(PRESIGN_LAMBDA_NAME)")
 
 .PHONY:
-lambda-create: $(GO_ZIP_PATH)
+lambda-create: $(PRESIGN_GO_ZIP_PATH)
+	@# presign lambda
 	-$(AWS) lambda create-function \
-		--function-name $(LAMBDA_NAME) \
+		--function-name $(PRESIGN_LAMBDA_NAME) \
 		--runtime go1.x \
-		--zip-file $(GO_AWS_ZIP_PATH) \
-		--handler $(GO_BINARY) \
-		--role $(LAMBDA_ROLE_ARN) \
-		--description "$(LAMBDA_DESC)"|jq .
+		--zip-file $(PRESIGN_GO_AWS_ZIP_PATH) \
+		--handler $(PRESIGN_GO_BINARY) \
+		--role $(PRESIGN_LAMBDA_ROLE_ARN) \
+		--description "$(PRESIGN_LAMBDA_DESC)"|jq .
 
 .PHONY:
-lambda-update: $(GO_ZIP_PATH)
+lambda-update: $(PRESIGN_GO_ZIP_PATH)
+	@# presign lambda
 	-$(AWS) lambda update-function-code \
-		--function-name $(LAMBDA_NAME) \
-		--zip-file $(GO_AWS_ZIP_PATH)|jq .
+		--function-name $(PRESIGN_LAMBDA_NAME) \
+		--zip-file $(PRESIGN_GO_AWS_ZIP_PATH)|jq .
 
 .PHONY:
 lambda-delete:
+	@# presign lambda
 	-$(AWS) lambda delete-function \
-		--function-name $(LAMBDA_NAME)
+		--function-name $(PRESIGN_LAMBDA_NAME)
 

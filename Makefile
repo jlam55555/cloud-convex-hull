@@ -19,19 +19,24 @@ BUILDDIR?=target
 # creating bucket for hosting website (note: has to be universally unique)
 HOST_BUCKET_NAME?=$(APP_PREFIX)hostbucket
 WEBSITE_SRCDIR?=src/$(APP_PREFIX)frontend
+WEBSITE_DISTDIR?=src/$(APP_PREFIX)frontend/dist
+WEBSITE_BUILD=npm run --prefix $(WEBSITE_SRCDIR) build
 
 # creating upload bucket (note: has to be universally unique)
 UPLOAD_BUCKET_NAME?=$(APP_PREFIX)uploadsbucket
 
-# deploying lambda
-LAMBDA_NAME?=$(APP_PREFIX)_function
-LAMBDA_DESC?=Lambda for convex hull application
-LAMBDA_ROLE?=$(APP_PREFIX)_role
+# deploying lambdas
+
+# lambda for presigning requests to S3
+PRESIGN_LAMBDA_NAME?=$(APP_PREFIX)_presign
+PRESIGN_LAMBDA_DESC?=Presigns GET/PUT requests
+PRESIGN_LAMBDA_ROLE?=$(APP_PREFIX)_presign_role
 
 # compiling and packaging lambda
+PRESIGN_GO_PACKAGE?=$(APP_PREFIX)presign
+PRESIGN_GO_BINARY?=$(APP_PREFIX)presign
+
 GO_SOURCES?=$(shell find src -name *.go)
-GO_PACKAGE?=$(APP_PREFIX)lambda
-GO_BINARY?=$(APP_PREFIX)lambda
 GO_ENVVAR?=GOOS=linux GOARCH=amd64 CGO_ENABLED=0
 GO_LDFLAGS?=-ldflags="-X main.awsRegion=$(AWS_REGION)\
 	-X main.uploadBucketName=$(UPLOAD_BUCKET_NAME)"
@@ -75,7 +80,9 @@ endef
 # see the component makefiles for additional targets and implementation details
 
 .PHONY:
-all: host-bucket-create\
+all: build-website\
+	host-bucket-create\
+	host-bucket-sync\
 	upload-bucket-create\
 	upload-bucket-policy-create\
 	lambda-iam-create\
