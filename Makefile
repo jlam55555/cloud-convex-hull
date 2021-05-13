@@ -32,9 +32,15 @@ PRESIGN_LAMBDA_NAME?=$(APP_PREFIX)_presign
 PRESIGN_LAMBDA_DESC?=Presigns GET/PUT requests
 PRESIGN_LAMBDA_ROLE?=$(APP_PREFIX)_presign_role
 
+CH_LAMBDA_NAME?=$(APP_PREFIX)_ch
+CH_LAMBDA_DESC?=Computes convex hull
+
 # compiling and packaging lambda
 PRESIGN_GO_PACKAGE?=$(APP_PREFIX)presign
 PRESIGN_GO_BINARY?=$(APP_PREFIX)presign
+
+CH_GO_PACKAGE?=$(APP_PREFIX)hull
+CH_GO_BINARY?=$(APP_PREFIX)hull
 
 GO_SOURCES?=$(shell find src -name *.go)
 GO_ENVVAR?=GOOS=linux GOARCH=amd64 CGO_ENABLED=0

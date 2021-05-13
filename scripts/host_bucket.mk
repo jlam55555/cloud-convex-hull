@@ -21,7 +21,7 @@ host-bucket-create:
 		--bucket $(HOST_BUCKET_NAME) \
 		--policy '$(HOST_BUCKET_POLICY)'
 	-$(AWS) s3 website $(HOST_BUCKET_URI) \
-		--index-document index.html
+		--index-document index.html \
 		--error-document index.html
 
 .PHONY:

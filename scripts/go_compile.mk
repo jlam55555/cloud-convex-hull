@@ -9,10 +9,23 @@ $(PRESIGN_GO_BINARY_PATH): $(GO_SOURCES)
 
 # for testing the build
 .PHONY:
-target-build: $(PRESIGN_GO_BINARY_PATH)
+target-build: $(PRESIGN_GO_BINARY_PATH) $(CH_GO_BINARY_PATH)
 
 $(PRESIGN_GO_ZIP_PATH): $(PRESIGN_GO_BINARY_PATH)
 	zip -j $@ $<
+
+### convex hull lambda
+CH_GO_BINARY_PATH:=$(BUILDDIR)/$(CH_GO_BINARY)
+CH_GO_ZIP_PATH:=$(CH_GO_BINARY_PATH).zip
+CH_GO_AWS_ZIP_PATH:=fileb://$(CH_GO_ZIP_PATH)
+
+$(CH_GO_BINARY_PATH): $(GO_SOURCES)
+	$(GO_ENVVAR) go build -o $@ $(GO_LDFLAGS) $(CH_GO_PACKAGE)
+
+$(CH_GO_ZIP_PATH): $(CH_GO_BINARY_PATH)
+	zip -j $@ $<
+
+### general
 
 .PHONY:
 target-clean:
