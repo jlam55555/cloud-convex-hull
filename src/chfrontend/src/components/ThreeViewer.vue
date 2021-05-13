@@ -1,4 +1,5 @@
 <template>
+    <p>{{status}}</p>
     <div ref="threeContainer"></div>
 </template>
 
@@ -10,12 +11,14 @@
     // https://www.npmjs.com/package/three-orbitcontrols
     import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
     import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
+    import {BufferGeometryUtils} from "three/examples/jsm/utils/BufferGeometryUtils";
 
     export default defineComponent({
         name: 'Model',
 
         data() {
             return {
+                status: 'Waiting for object...',
                 scene: <any>null,
             };
         },
@@ -28,23 +31,31 @@
         },
 
         watch: {
+            // on prop change
             objUrl: function(newVal, oldVal) {
                 if (!newVal) {
                     return;
                 }
-                console.log('Got new objUrl: ', newVal);
 
                 // load object from obj file
                 const loader = new OBJLoader();
                 loader.load(newVal, obj => {
-                    const geometry = obj.children[0].geometry;
-                    geometry.center();
-                    const material = new THREE.MeshLambertMaterial({});
-                    const mesh = new THREE.Mesh(geometry, material);
+                    for (const child of obj.children) {
+                        let geometry = (<any>child).geometry;
 
-                    this.$data.scene.add(mesh);
+                        // prevent duplicate vertices from affecting the centering
+                        geometry = BufferGeometryUtils.mergeVertices(geometry);
+
+                        // make the mesh in a more convenient location
+                        geometry.center();
+
+                        const material = new THREE.MeshLambertMaterial({});
+                        const mesh = new THREE.Mesh(geometry, material);
+
+                        this.$data.scene.add(mesh);
+                    }
                 }, xhr => {
-                    console.log((xhr.loaded)/(xhr.total)*100 + '% loaded');
+                    this.$data.status = ((xhr.loaded)/(xhr.total)*100).toFixed(2) + '% loaded';
                 }, err => {
                     console.error(err);
                 });
@@ -54,14 +65,13 @@
         mounted() {
             // ref: https://threejs.org/docs/#manual/en
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75,
-                window.innerWidth/window.innerHeight, 0.1, 1000);
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
 
             // set scene to state
             this.$data.scene = scene;
 
             const renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(500, 500);
             (<HTMLElement>this.$refs.threeContainer).appendChild(renderer.domElement);
 
             camera.position.set(20, 20, 20);
