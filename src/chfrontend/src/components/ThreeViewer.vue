@@ -76,9 +76,6 @@
                         // prevent duplicate vertices from affecting the centering
                         geometry = BufferGeometryUtils.mergeVertices(geometry);
 
-                        // make the mesh in a more convenient location
-                        geometry.center();
-
                         const material = new THREE.MeshLambertMaterial({});
                         const mesh = new THREE.Mesh(geometry, material);
 

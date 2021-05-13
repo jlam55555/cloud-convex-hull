@@ -1,5 +1,5 @@
 <template>
-    <h1>Hello, world! from model</h1>
+    Viewing model: {{$route.params.key || 'None'}}
 
     <ThreeViewer :objUrl="objUrl"/>
 
