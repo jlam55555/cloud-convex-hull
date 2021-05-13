@@ -45,7 +45,7 @@
                 await putRequest(this.file, putUrl);
 
                 // redirect to model page after completion
-                this.$router.push({path: '/model/' + key});
+                this.$router.push({path: '/model/' + key.split('.')[0]});
             },
         },
     });

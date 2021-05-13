@@ -22,5 +22,5 @@ func GenKey() string {
 	for i := range key {
 		key[i] = syms[rand.Intn(len(syms))]
 	}
-	return string(key)
+	return string(key) + ".obj"
 }

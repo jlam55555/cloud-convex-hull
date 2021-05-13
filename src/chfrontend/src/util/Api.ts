@@ -2,7 +2,7 @@ import {API_URL} from "../env";
 
 // declare types
 interface PresignRequest {
-    type: 'GET' | 'POST';
+    type: 'GET' | 'PUT';
     key?: string;
 }
 interface PresignResponse {

@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"chutil"
 	"context"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
@@ -9,7 +11,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/golang/geo/r3"
+	"github.com/markus-wa/quickhull-go"
 	"log"
+	"objio"
+	"strings"
 )
 
 // CHEvent is the input json for the lambda
@@ -39,6 +45,33 @@ func init() {
 	s3Client = s3.NewFromConfig(cfg)
 }
 
+// QuickHullGoTest tries out the prewritten Go library for quickhull
+func QuickHullGoTest(points [][3]float64) ([][3]float64, [][3]int) {
+	// convert points to r3.Vector
+	pointsR3 := make([]r3.Vector, len(points))
+	for i, v := range points {
+		pointsR3[i] = r3.Vector{v[0], v[1], v[2]}
+	}
+
+	qh := quickhull.QuickHull{}
+
+	ch := qh.ConvexHull(pointsR3, true, false, 0)
+
+	// convert to vertices, faces as needed for objio
+	vertices := make([][3]float64, 0)
+	faces := make([][3]int, 0)
+	for i, triangle := range ch.Triangles() {
+		vertices = append(vertices,
+			[3]float64{triangle[0].X, triangle[0].Y, triangle[0].Z},
+			[3]float64{triangle[1].X, triangle[1].Y, triangle[1].Z},
+			[3]float64{triangle[2].X, triangle[2].Y, triangle[2].Z},
+		)
+		faces = append(faces, [3]int{3*i + 1, 3*i + 2, 3*i + 3})
+	}
+
+	return vertices, faces
+}
+
 // HandleRequest presigns an S3 URL for either a PUT or GET request
 func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (
 	events.APIGatewayProxyResponse, error) {
@@ -62,10 +95,17 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (
 		}, nil
 	}
 
-	// TODO: working here
+	// make sure key field is present
+	if payload.Key == "" {
+		return events.APIGatewayProxyResponse{
+			Body:       "Missing field \"Key\".",
+			StatusCode: 400,
+		}, nil
+	}
+
 	// read the thing into memory
 	req, err := s3Client.GetObject(context.TODO(), &s3.GetObjectInput{
-		Key:    aws.String(payload.Key),
+		Key:    aws.String(payload.Key + ".obj"),
 		Bucket: aws.String(uploadBucketName),
 	})
 	if err != nil {
@@ -75,18 +115,41 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (
 		}, nil
 	}
 
-	reader := bufio.NewReader(req.Body)
-
-	firstLine, err := reader.ReadString('\n')
+	points, err := objio.Parse(bufio.NewReader(req.Body))
 	if err != nil {
 		return events.APIGatewayProxyResponse{
-			Body:       "Error reading file from S3.",
+			Body:       "Reading I/O error.",
+			StatusCode: 400,
+		}, nil
+	}
+	if err = req.Body.Close(); err != nil {
+		panic(err)
+	}
+
+	buf := bytes.NewBufferString("")
+
+	// perform quickhull
+	vertices, faces := QuickHullGoTest(points)
+	if err = objio.Dump(buf, vertices, faces); err != nil {
+		panic(err)
+	}
+
+	// write file back to new model in s3
+	newKey := chutil.GenKey()
+	_, err = s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Key:    aws.String(newKey),
+		Bucket: aws.String(uploadBucketName),
+		Body:   strings.NewReader(buf.String()),
+	})
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Body:       "Writing I/O error.",
 			StatusCode: 400,
 		}, nil
 	}
 
 	return events.APIGatewayProxyResponse{
-		Body:       firstLine,
+		Body:       newKey,
 		StatusCode: 200,
 	}, nil
 }

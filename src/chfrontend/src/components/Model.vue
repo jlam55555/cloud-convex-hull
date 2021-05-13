@@ -28,7 +28,7 @@
             async getObjUrl() {
                 return (await presignRequest({
                     type: 'GET',
-                    key: <string>this.$route.params.key,
+                    key: <string>this.$route.params.key + '.obj',
                 }).then(res => res.json())).url;
             },
 
@@ -38,7 +38,9 @@
                 // click it; see https://stackoverflow.com/a/49917066/2397327
                 const a = document.createElement('a');
                 a.href = await this.getObjUrl();
-                a.download = a.href.split('/').pop() + '.obj';
+                a.download = <string>a.href.split('/').pop();
+
+                console.log(a.href, a.download);
 
                 document.body.appendChild(a);
                 a.click();
