@@ -1,7 +1,7 @@
 <template>
     <NavBar/>
 
-    <Dashboard/>
+    <router-view/>
 </template>
 
 <script lang="ts">
