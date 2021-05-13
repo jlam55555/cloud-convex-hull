@@ -86,15 +86,15 @@ endef
 # see the component makefiles for additional targets and implementation details
 
 .PHONY:
-all: build-website\
-	host-bucket-create\
-	host-bucket-sync\
-	upload-bucket-create\
+all: upload-bucket-create\
 	upload-bucket-policy-create\
 	lambda-iam-create\
 	loggroup-create\
 	lambda-create\
-	api-create
+	api-create\
+	build-website\
+	host-bucket-create\
+	host-bucket-sync
 
 .PHONY:
 clean: target-clean\

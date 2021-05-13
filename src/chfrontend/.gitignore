@@ -3,3 +3,6 @@ node_modules
 
 # built output
 dist
+
+# .env file -- will be created on API build
+.env

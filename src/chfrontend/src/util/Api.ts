@@ -1,5 +1,3 @@
-import {API_URL} from "../env";
-
 // declare types
 interface PresignRequest {
     type: 'GET' | 'PUT';
@@ -12,7 +10,7 @@ interface PresignResponse {
 
 // get presigned request
 const presignRequest = (request: PresignRequest): Promise<Response> => {
-    return fetch(API_URL + '/presign', {
+    return fetch(import.meta.env.VITE_API_URL + '/presign', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -30,7 +28,7 @@ const putRequest = (file: any, url: any): Promise<Response> => {
 };
 
 const convexHullRequest = (key: any): Promise<Response> => {
-    return fetch(API_URL + '/convexhull', {
+    return fetch(import.meta.env.VITE_API_URL + '/convexhull', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

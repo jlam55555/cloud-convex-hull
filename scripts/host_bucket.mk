@@ -8,6 +8,11 @@ HOST_BUCKET_WEBSITE:=http://$(HOST_BUCKET_NAME).s3-website-$(AWS_REGION).amazona
 
 .PHONY:
 build-website:
+	@# update env with api endpoint
+	-echo "VITE_API_URL=$(shell $(AWS) apigatewayv2 get-apis|jq -r \
+		'[."Items"[]|select(.Name=="$(API_NAME)")][0].ApiEndpoint')/dev/" \
+		>src/chfrontend/.env
+
 	-$(WEBSITE_BUILD)
 
 .PHONY:
