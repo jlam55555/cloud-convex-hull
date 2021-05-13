@@ -21,7 +21,7 @@ const presignRequest = (request: PresignRequest): Promise<Response> => {
     });
 };
 
-// put a
+// put a file onto s3
 const putRequest = (file: any, url: any): Promise<Response> => {
     return fetch(url, {
         method: 'PUT',
@@ -29,4 +29,14 @@ const putRequest = (file: any, url: any): Promise<Response> => {
     });
 };
 
-export {presignRequest, putRequest};
+const convexHullRequest = (key: any): Promise<Response> => {
+    return fetch(API_URL + '/convexhull', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({key})
+    });
+};
+
+export {presignRequest, putRequest, convexHullRequest};

@@ -1,3 +1,3 @@
-const API_URL = 'https://2j0r42pj0l.execute-api.us-east-1.amazonaws.com/dev/';
+const API_URL = 'https://pm4pgbmhg3.execute-api.us-east-1.amazonaws.com/dev/';
 
 export {API_URL};

@@ -4,11 +4,13 @@
     <ThreeViewer :objUrl="objUrl"/>
 
     <button @click="downloadObjFile()">Download .obj file</button>
+
+    <button @click="calculateConvexHull()">Calculate convex hull</button>
 </template>
 
 <script lang="ts">
     import {defineComponent} from 'vue'
-    import {presignRequest} from "../util/Api";
+    import {convexHullRequest, presignRequest} from "../util/Api";
     import ThreeViewer from "./ThreeViewer.vue";
 
     export default defineComponent({
@@ -40,12 +42,25 @@
                 a.href = await this.getObjUrl();
                 a.download = <string>a.href.split('/').pop();
 
-                console.log(a.href, a.download);
-
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-            }
+            },
+
+            async calculateConvexHull() {
+                const {key} = await convexHullRequest(this.$route.params.key)
+                    .then(res => res.json());
+
+                this.$router.push({
+                    path: '/model/' + key.split('.')[0]
+                });
+            },
+        },
+
+        watch: {
+            async $route(newVal, oldVal) {
+                this.objUrl = await this.getObjUrl();
+            },
         },
 
         // get model

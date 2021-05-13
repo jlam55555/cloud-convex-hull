@@ -148,8 +148,15 @@ func HandleRequest(ctx context.Context, event events.APIGatewayProxyRequest) (
 		}, nil
 	}
 
+	jsn, err := json.Marshal(CHResponse{
+		Key: newKey,
+	})
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500}, err
+	}
+
 	return events.APIGatewayProxyResponse{
-		Body:       newKey,
+		Body:       string(jsn),
 		StatusCode: 200,
 	}, nil
 }

@@ -37,6 +37,36 @@
                     return;
                 }
 
+                (<HTMLElement>this.$refs.threeContainer).innerHTML = '';
+
+                // ref: https://threejs.org/docs/#manual/en
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+
+                const renderer = new THREE.WebGLRenderer();
+                renderer.setSize(500, 500);
+                (<HTMLElement>this.$refs.threeContainer).appendChild(renderer.domElement);
+
+                camera.position.set(20, 20, 20);
+
+                // allow user to scroll/pan/rotate with mouse/touch
+                const controls = new OrbitControls(camera, renderer.domElement);
+
+                // add lighting
+                const light = new THREE.AmbientLight(0x404040);
+                scene.add(light);
+
+                const spotlight = new THREE.SpotLight(0xffffff, 1);
+                spotlight.position.set(30, 30, 30);
+                spotlight.target.position.set(0, 0, 0);
+                scene.add(spotlight);
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    renderer.render(scene, camera);
+                }
+                animate();
+
                 // load object from obj file
                 const loader = new OBJLoader();
                 loader.load(newVal, obj => {
@@ -52,7 +82,7 @@
                         const material = new THREE.MeshLambertMaterial({});
                         const mesh = new THREE.Mesh(geometry, material);
 
-                        this.$data.scene.add(mesh);
+                        scene.add(mesh);
                     }
                 }, xhr => {
                     this.$data.status = ((xhr.loaded)/(xhr.total)*100).toFixed(2) + '% loaded';
@@ -63,36 +93,6 @@
         },
 
         mounted() {
-            // ref: https://threejs.org/docs/#manual/en
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-
-            // set scene to state
-            this.$data.scene = scene;
-
-            const renderer = new THREE.WebGLRenderer();
-            renderer.setSize(500, 500);
-            (<HTMLElement>this.$refs.threeContainer).appendChild(renderer.domElement);
-
-            camera.position.set(20, 20, 20);
-
-            // allow user to scroll/pan/rotate with mouse/touch
-            const controls = new OrbitControls(camera, renderer.domElement);
-
-            // add lighting
-            const light = new THREE.AmbientLight(0x404040);
-            scene.add(light);
-
-            const spotlight = new THREE.SpotLight(0xffffff, 1);
-            spotlight.position.set(30, 30, 30);
-            spotlight.target.position.set(0, 0, 0);
-            scene.add(spotlight);
-
-            function animate() {
-                requestAnimationFrame(animate);
-                renderer.render(scene, camera);
-            }
-            animate();
         }
     })
 </script>

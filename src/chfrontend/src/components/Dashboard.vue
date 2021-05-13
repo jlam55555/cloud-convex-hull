@@ -1,16 +1,9 @@
 <template>
-    <h1>This is the dashboard.</h1>
-
-    <p>TODO: list of a user's projects</p>
-
-    <p>TODO: upload a file</p>
-
+    <h1>Upload a file to begin</h1>
     <form>
         <input type="file" placeholder="Model file" @change="onFileChange($event)">
         <button @click="uploadFile($event)">Upload file</button>
     </form>
-
-
 </template>
 
 <script lang="ts">
