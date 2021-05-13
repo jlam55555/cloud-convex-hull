@@ -1,5 +1,6 @@
 <template>
-    This is the navbar.
+    <router-link to="/">Home</router-link>
+    <hr>
 </template>
 
 <script lang="ts">

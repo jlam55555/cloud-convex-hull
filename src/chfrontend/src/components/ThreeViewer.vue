@@ -9,9 +9,16 @@
     // despite this weirdness, this is the canonical way:
     // https://www.npmjs.com/package/three-orbitcontrols
     import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+    import {OBJLoader} from "three/examples/jsm/loaders/OBJLoader";
 
     export default defineComponent({
         name: 'Model',
+
+        data() {
+            return {
+                scene: <any>null,
+            };
+        },
 
         props: {
             objUrl: {
@@ -20,26 +27,56 @@
             },
         },
 
-        mounted() {
-            console.log('Got objUrl: ' + this.objUrl);
+        watch: {
+            objUrl: function(newVal, oldVal) {
+                if (!newVal) {
+                    return;
+                }
+                console.log('Got new objUrl: ', newVal);
 
+                // load object from obj file
+                const loader = new OBJLoader();
+                loader.load(newVal, obj => {
+                    const geometry = obj.children[0].geometry;
+                    geometry.center();
+                    const material = new THREE.MeshLambertMaterial({});
+                    const mesh = new THREE.Mesh(geometry, material);
+
+                    this.$data.scene.add(mesh);
+                }, xhr => {
+                    console.log((xhr.loaded)/(xhr.total)*100 + '% loaded');
+                }, err => {
+                    console.error(err);
+                });
+            }
+        },
+
+        mounted() {
             // ref: https://threejs.org/docs/#manual/en
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75,
                 window.innerWidth/window.innerHeight, 0.1, 1000);
 
+            // set scene to state
+            this.$data.scene = scene;
+
             const renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             (<HTMLElement>this.$refs.threeContainer).appendChild(renderer.domElement);
 
-            const geometry = new THREE.BoxGeometry();
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            const cube = new THREE.Mesh(geometry, material);
-            scene.add(cube);
+            camera.position.set(20, 20, 20);
 
-            camera.position.z = 5;
-
+            // allow user to scroll/pan/rotate with mouse/touch
             const controls = new OrbitControls(camera, renderer.domElement);
+
+            // add lighting
+            const light = new THREE.AmbientLight(0x404040);
+            scene.add(light);
+
+            const spotlight = new THREE.SpotLight(0xffffff, 1);
+            spotlight.position.set(30, 30, 30);
+            spotlight.target.position.set(0, 0, 0);
+            scene.add(spotlight);
 
             function animate() {
                 requestAnimationFrame(animate);

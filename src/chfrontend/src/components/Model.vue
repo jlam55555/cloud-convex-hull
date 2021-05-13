@@ -1,7 +1,7 @@
 <template>
     <h1>Hello, world! from model</h1>
 
-    <ThreeViewer :objUrl="'testing'"/>
+    <ThreeViewer :objUrl="objUrl"/>
 </template>
 
 <script lang="ts">
@@ -16,6 +16,12 @@
             ThreeViewer
         },
 
+        data() {
+            return {
+                objUrl: null,
+            };
+        },
+
         // get model
         async created() {
             // get presigned GET URL
@@ -25,8 +31,8 @@
             })
                 .then(res => res.json());
 
-            // TODO: load this obj file with THREE.js
-            console.log(response);
+            // load this file with three.js
+            this.objUrl = response.url;
         },
     })
 </script>
