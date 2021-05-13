@@ -37,11 +37,14 @@
                     return;
                 }
 
+                // need to put to presigned url
                 const {key, url: putUrl} = await presignRequest({type: 'PUT'})
                     .then(res => res.json());
 
+                // make regular put request
                 await putRequest(this.file, putUrl);
 
+                // redirect to model page after completion
                 this.$router.push({path: '/model/' + key});
             },
         },

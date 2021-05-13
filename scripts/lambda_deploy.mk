@@ -1,6 +1,6 @@
 ### deploying lambda
 # ref: (see packaging golang for lambda)
-PRESIGN_LAMBDA_ARN:=$(call ARN,lambda,"function:$(PRESIGN_LAMBDA_NAME)")
+
 
 .PHONY:
 lambda-create: $(PRESIGN_GO_ZIP_PATH)

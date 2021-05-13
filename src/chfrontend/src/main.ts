@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import Dashboard from "./components/Dashboard.vue";
 import Model from "./components/Model.vue";
-import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import PageNotFound from "./components/PageNotFound.vue";
 
 const routes = [
