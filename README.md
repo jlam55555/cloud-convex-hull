@@ -1,5 +1,5 @@
-# Distributed Convex Hull
-Distributed convex hull cloud service implemented on AWS
+# Cloud Convex Hull Web App
+Serverless convex hull service implemented on AWS cloud
 
 ---
 
