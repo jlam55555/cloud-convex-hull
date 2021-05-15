@@ -16,6 +16,8 @@ To build and install the whole app:
 $ make all
 ```
 
+This will build the app to `http://[HOST_BUCKET_NAME].s3-website-[AWS_REGION].amazonaws.com/`, where `HOST_BUCKET_NAME` and `AWS_REGION` are specified in the Makefile.
+
 To tear down the whole app:
 ```bash
 $ make clean
